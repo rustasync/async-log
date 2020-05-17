@@ -11,13 +11,22 @@ authors = ["Yoshua Wuyts <yoshuawuyts@gmail.com>"]
 readme = "README.md"
 edition = "2018"
 
+[features]
+default = ["attributes"]
+attributes = ["async-log-attributes"]
+
 [dependencies]
 log = { version = "0.4.8", features = ["std", "kv_unstable"] }
 backtrace = "0.3.34"
-async-log-attributes = { path = "async-log-attributes", version = "1.0.1" }
+async-log-attributes = { path = "async-log-attributes", version = "1.0.1", optional = true }
 
 [dev-dependencies]
 femme = "1.2.0"
+
+[[example]]
+name = "trace"
+path = "examples/trace.rs"
+required-features = ["attributes"]
 
 [workspace]
 members = [

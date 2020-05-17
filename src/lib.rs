@@ -88,19 +88,19 @@
 //!         .unwrap();
 //! }
 //!
-//! fn main() {
-//!     setup_logger();
 //!
-//!     span!("new level, depth={}", 1, {
-//!         let x = "beep";
-//!         info!("look at this value, x={}", x);
+//! setup_logger();
 //!
-//!         span!("new level, depth={}", 2, {
-//!             let y = "boop";
-//!             info!("another nice value, y={}", y);
-//!         })
+//! span!("new level, depth={}", 1, {
+//!     let x = "beep";
+//!     info!("look at this value, x={}", x);
+//!
+//!     span!("new level, depth={}", 2, {
+//!         let y = "boop";
+//!         info!("another nice value, y={}", y);
 //!     })
-//! }
+//! })
+//!
 //! ```
 
 #![forbid(unsafe_code, future_incompatible, rust_2018_idioms)]
@@ -108,6 +108,7 @@
 #![warn(missing_docs, unreachable_pub)]
 #![cfg_attr(test, deny(warnings))]
 
+#[cfg(feature = "attributes")]
 pub use async_log_attributes::instrument;
 
 use std::fmt::Arguments;

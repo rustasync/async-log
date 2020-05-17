@@ -4,8 +4,6 @@
 #![deny(missing_debug_implementations, nonstandard_style)]
 #![recursion_limit = "512"]
 
-extern crate proc_macro;
-
 use proc_macro::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::spanned::Spanned;
@@ -17,25 +15,25 @@ pub fn instrument(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     let attrs = &input.attrs;
     let vis = &input.vis;
-    let constness = &input.constness;
-    let unsafety = &input.unsafety;
-    let asyncness = &input.asyncness;
-    let abi = &input.abi;
+    let constness = &input.sig.constness;
+    let unsafety = &input.sig.unsafety;
+    let asyncness = &input.sig.asyncness;
+    let abi = &input.sig.abi;
 
-    let generics = &input.decl.generics;
-    let name = &input.ident;
-    let inputs = &input.decl.inputs;
-    let output = &input.decl.output;
+    let generics = &input.sig.generics;
+    let name = &input.sig.ident;
+    let inputs = &input.sig.inputs;
+    let output = &input.sig.output;
     let body = &input.block.stmts;
 
     let mut names = String::new();
     let mut args = Vec::<syn::Pat>::new();
 
     for fn_arg in inputs {
-        if let syn::FnArg::Captured(arg) = fn_arg {
+        if let syn::FnArg::Typed(arg) = fn_arg {
             let pat = arg.pat.clone();
 
-            if let syn::Pat::Ident(pat_ident) = &pat {
+            if let syn::Pat::Ident(pat_ident) = &*pat {
                 names.push_str(&format!(", {}={{:?}}", pat_ident.ident));
             } else {
                 let tokens = quote_spanned! { fn_arg.span() =>
@@ -44,9 +42,11 @@ pub fn instrument(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 return TokenStream::from(tokens);
             }
 
-            args.push(pat);
+            args.push(*pat);
         }
     }
+
+    let inputs = inputs.iter();
 
     let result = quote! {
         #(#attrs)*
