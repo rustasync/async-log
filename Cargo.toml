@@ -12,7 +12,7 @@ readme = "README.md"
 edition = "2018"
 
 [dependencies]
-log = { version = "0.4.8", features = ["std", "kv_unstable"] }
+log = { version = "0.4.8", features = ["kv_unstable_std"] }
 backtrace = "0.3.34"
 async-log-attributes = { path = "async-log-attributes", version = "1.0.1" }
 
